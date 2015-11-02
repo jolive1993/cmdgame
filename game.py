@@ -4,6 +4,8 @@ import getpass
 playing = True   
 playerOneHealth = 100
 playerTwoHealth = 100
+plPowerAtkTurns = 3
+p2PowerAtkTurns = 3
 init()
 class playerOne:
     def turnBasic(playerTwoHealth):
@@ -40,6 +42,7 @@ class playerOne:
         playerTwoHealth -= diceOneRoll * damageMultiply
         print(Fore.RED + Style.BRIGHT + "You hit for " + str(diceOneRoll) + " with a multiplyer of " + str(damageMultiply))
         print(Fore.RED + Style.BRIGHT + "Player two health " + str(playerTwoHealth))
+        print(Fore.RED + Style.BRIGHT + "You have " + str(plPowerAtkTurns) + " power attacks remaining")
         return playerTwoHealth
 class playerTwo:
     def turnBasic(playerOneHealth):
@@ -74,8 +77,9 @@ class playerTwo:
             else:
                 damageMultiply = 4
         playerOneHealth -= diceOneRoll * damageMultiply
-        print(Fore.RED + Style.BRIGHT + "You hit for " + str(diceOneRoll) + " with a multiplyer of " + str(damageMultiply))
-        print(Fore.RED + Style.BRIGHT + "Player one health " + str(playerOneHealth))
+        print(Fore.BLUE + Style.BRIGHT + "You hit for " + str(diceOneRoll) + " with a multiplyer of " + str(damageMultiply))
+        print(Fore.BLUE + Style.BRIGHT + "Player one health " + str(playerOneHealth))
+        print(Fore.BLUE + Style.BRIGHT + "You have " + str(p2PowerAtkTurns) + " power attacks remaining")
         return playerOneHealth
 while playing:
     print(Fore.RED + Style.BRIGHT + "Player One's Turn")
@@ -89,8 +93,12 @@ while playing:
             playerOneHealth = playerOne.turnHeal(playerOneHealth)
             break
         elif playerOneChoice == str(3):
-            playerTwoHealth = playerOne.turnPowerAttack(playerTwoHealth, playerOneHealth)
-            break
+            if plPowerAtkTurns > 0:
+                playerTwoHealth = playerOne.turnPowerAttack(playerTwoHealth, playerOneHealth)
+                plPowerAtkTurns -= 1
+                break
+            else:
+                print("You are out of power attacks!")
         else:
             print("Not a valid choice")
     if playerTwoHealth <= 0:
@@ -100,7 +108,7 @@ while playing:
     playerOneTurn = False
     playerTwoTurn = True
     while playerTwoTurn:
-        playerTwoChoice = getpass.getpass(prompt="Press 1 to attack, press 2 to heal", stream=None)
+        playerTwoChoice = getpass.getpass(prompt="Press 1 to attack, press 2 to heal, press 3 for power attack", stream=None)
         if playerTwoChoice == str(1):
             playerOneHealth = playerTwo.turnBasic(playerOneHealth)
             break
@@ -108,7 +116,12 @@ while playing:
             playerTwoHealth = playerTwo.turnHeal(playerTwoHealth)
             break
         elif playerTwoChoice == str(3):
-            playerOneHealth = playerTwo.turnPowerAttack(playerOneHealth, playerTwoHealth)
+            if p2PowerAtkTurns > 0:
+                playerOneHealth = playerTwo.turnPowerAttack(playerOneHealth, playerTwoHealth)
+                p2PowerAtkTurns -= 1
+                break
+            else:
+                print("You are out of power attacks!")
         else:
             print("Not a valid choice")
     if playerOneHealth <= 0:
