@@ -3,9 +3,10 @@ from colorama import *
 import getpass  
 init()
 class Player:
-    def __init__(self):
+    def __init__(self, name):
         self.health = 100
         self.powerAttackTurns = 3
+        self.name = name
 class Turn:
     def basic(victimHealth):
         diceOneRoll = random.randint (1,6)
@@ -45,7 +46,8 @@ class Turn:
         return victimHealth
 class Game:
     def game(attacker, defender, name):
-        print(Fore.RED + Style.BRIGHT + str(name) + " Turn")
+        print(Fore.RED + Style.BRIGHT + name.name + "'s Turn")
+        print(name.name + "'s " + "health is " + str(attacker.health))
         playerOneTurn = True
         while playerOneTurn:
             playerOneChoice = getpass.getpass(prompt="Press 1 to attack, press 2 to heal, press 3 for power attack", stream=None)
@@ -63,17 +65,53 @@ class Game:
                 else:
                     print("You are out of power attacks!")
             else:
-                print("Not a valid choice")  
+                print("Not a valid choice")
+    def gameAi(attacker, defender, name):
+        print(Fore.RED + Style.BRIGHT + name.name + "'s Turn")
+        print(name.name + "'s " + "health is " + str(attacker.health))
+        playerOneTurn = True
+        while playerOneTurn:
+            if attacker.powerAttackTurns <= 0:
+                playerOneChoice = random.randint(1,2)
+            else:
+                playerOneChoice = random.randint(1,3) 
+            if playerOneChoice == 1:
+                defender.health = Turn.basic(defender.health)
+                break
+            elif playerOneChoice == 2:
+                attacker.health = Turn.heal(attacker.health)
+                break
+            elif playerOneChoice == 3:
+                attacker.powerAttackTurns -= 1
+                defender.health = Turn.powerAttack(defender.health, attacker.health, attacker)
+                break              
+print(Fore.RED + Style.BRIGHT + "DUNGENATORS")
 playing = True
-playerOne = Player()
-playerTwo = Player()
-while playing:
-    Game.game(playerOne, playerTwo, "Player One")
-    if playerTwo.health <= 0:
-        print(Fore.RED + Style.BRIGHT + "Player One Wins")
+while True:
+    promptAi = input("How many players?")
+    if promptAi == "1":
+        ai = 1
         break
-    Game.game(playerTwo, playerOne, "Player Two")
+    elif promptAi == "2":
+        ai = 2
+        break
+    else:
+        print("Invalid Input")
+playerOne = Player(str(input("Player One Insert Name ")))
+if ai == 2:
+    playerTwo = Player(str(input("Player Two Insert Name ")))
+else:
+    playerTwo = Player("Ai")
+while playing:
+    Game.game(playerOne, playerTwo, playerOne)
+    if playerTwo.health <= 0:
+        print(Fore.BLUE + Style.BRIGHT + playerOne.name + " wins")
+        break
+    if ai == 1:
+        Game.gameAi(playerTwo, playerOne, playerTwo)
+    else:
+        Game.game(playerTwo, playerOne, playerTwo)
     if playerOne.health <= 0:
-        print(Fore.BLUE + Style.BRIGHT + "Player Two Wins")
+        print(Fore.BLUE + Style.BRIGHT + playerTwo.name + " wins ")
         break
 print("GAME OVER")  
