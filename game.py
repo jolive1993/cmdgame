@@ -18,7 +18,29 @@ class playerOne:
         print(Fore.RED + Style.BRIGHT + "You healed " + str(diceOneRoll))
         playerOneHealth += diceOneRoll
         print(Fore.RED + Style.BRIGHT + "Player one health " + str(playerOneHealth))
-        return playerOneHealth    
+        return playerOneHealth
+    def turnPowerAttack(playerTwoHealth, playerOneHealth):
+        diceOneRoll = random.randint (1,10)
+        diceTwoRoll = random.randint (0,100)
+        if playerOneHealth < 10:
+            print(Fore.CYAN + Style.BRIGHT + "Dying mode activated increased chance of damage multiplyer!!!")
+            if diceTwoRoll < 30:
+                damageMultiply = 2
+            elif diceTwoRoll < 60:
+                damageMultiply = 3
+            else:
+                damageMultiply = 5
+        else:
+            if diceTwoRoll < 60:
+                damageMultiply = 2
+            elif diceTwoRoll < 90:
+                damageMultiply = 3
+            else:
+                damageMultiply = 4
+        playerTwoHealth -= diceOneRoll * damageMultiply
+        print(Fore.RED + Style.BRIGHT + "You hit for " + str(diceOneRoll) + " with a multiplyer of " + str(damageMultiply))
+        print(Fore.RED + Style.BRIGHT + "Player two health " + str(playerTwoHealth))
+        return playerTwoHealth
 class playerTwo:
     def turnBasic(playerOneHealth):
         diceOneRoll = random.randint (1,6)
@@ -33,17 +55,41 @@ class playerTwo:
         playerTwoHealth += diceOneRoll
         print(Fore.BLUE + Style.BRIGHT + "Player two health " + str(playerTwoHealth))
         return playerTwoHealth  
-
+    def turnPowerAttack(playerOneHealth, playerTwoHealth):
+        diceOneRoll = random.randint (1,10)
+        diceTwoRoll = random.randint (0,100)
+        if playerTwoHealth < 10:
+            print(Fore.CYAN + Style.BRIGHT + "Dying mode activated increased chance of damage multiplyer!!!")
+            if diceTwoRoll < 30:
+                damageMultiply = 2
+            elif diceTwoRoll < 60:
+                damageMultiply = 3
+            else:
+                damageMultiply = 5
+        else:
+            if diceTwoRoll < 60:
+                damageMultiply = 2
+            elif diceTwoRoll < 90:
+                damageMultiply = 3
+            else:
+                damageMultiply = 4
+        playerOneHealth -= diceOneRoll * damageMultiply
+        print(Fore.RED + Style.BRIGHT + "You hit for " + str(diceOneRoll) + " with a multiplyer of " + str(damageMultiply))
+        print(Fore.RED + Style.BRIGHT + "Player one health " + str(playerOneHealth))
+        return playerOneHealth
 while playing:
     print(Fore.RED + Style.BRIGHT + "Player One's Turn")
     playerOneTurn = True
     while playerOneTurn:
-        playerOneChoice = getpass.getpass(prompt="Press 1 to attack, press 2 to heal", stream=None)
+        playerOneChoice = getpass.getpass(prompt="Press 1 to attack, press 2 to heal, press 3 for power attack", stream=None)
         if playerOneChoice == str(1):
             playerTwoHealth = playerOne.turnBasic(playerTwoHealth)
             break
         elif playerOneChoice == str(2):
             playerOneHealth = playerOne.turnHeal(playerOneHealth)
+            break
+        elif playerOneChoice == str(3):
+            playerTwoHealth = playerOne.turnPowerAttack(playerTwoHealth, playerOneHealth)
             break
         else:
             print("Not a valid choice")
@@ -61,6 +107,8 @@ while playing:
         elif playerTwoChoice == str(2):
             playerTwoHealth = playerTwo.turnHeal(playerTwoHealth)
             break
+        elif playerTwoChoice == str(3):
+            playerOneHealth = playerTwo.turnPowerAttack(playerOneHealth, playerTwoHealth)
         else:
             print("Not a valid choice")
     if playerOneHealth <= 0:
