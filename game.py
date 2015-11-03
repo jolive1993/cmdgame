@@ -1,7 +1,14 @@
 import random
 from colorama import *
-import getpass  
+import getpass
+import json
 init()
+scoreFile = open('score.txt', 'r+')
+class Scores:
+    def __init__(self):
+        self.scoresList = []
+    def addScore(data):
+        score.scoresList.append(data)   
 class Player:
     def __init__(self, name):
         self.health = 100
@@ -45,7 +52,7 @@ class Turn:
         print(Fore.YELLOW + Style.BRIGHT + "You have " + str(player.powerAttackTurns) + " power attacks remaining")
         return victimHealth
 class Game:
-    def game(attacker, defender, name):
+    def multiplayer(attacker, defender, name):
         print(Fore.RED + Style.BRIGHT + name.name + "'s Turn")
         print(name.name + "'s " + "health is " + str(attacker.health))
         playerOneTurn = True
@@ -66,7 +73,7 @@ class Game:
                     print("You are out of power attacks!")
             else:
                 print("Not a valid choice")
-    def gameAi(attacker, defender, name):
+    def ai(attacker, defender, name):
         print(Fore.RED + Style.BRIGHT + name.name + "'s Turn")
         print(name.name + "'s " + "health is " + str(attacker.health))
         playerOneTurn = True
@@ -86,7 +93,9 @@ class Game:
                 defender.health = Turn.powerAttack(defender.health, attacker.health, attacker)
                 break              
 print(Fore.RED + Style.BRIGHT + "DUNGENATORS")
+print(Fore.MAGENTA + "Welcome to dungenators, the point of the game is to kill rob before he kills you. You have three move types. 1 for basic attack, 2 for heal, and 3 for power attack. You only have three power attacks so use them wisely. If you activate a power attack while at low health the chance for a higher multiplyer is increased. Good luck and kill rob.")
 playing = True
+score = Scores()
 while True:
     promptAi = input("How many players?")
     if promptAi == "1":
@@ -103,15 +112,18 @@ if ai == 2:
 else:
     playerTwo = Player("Ai")
 while playing:
-    Game.game(playerOne, playerTwo, playerOne)
+    Game.multiplayer(playerOne, playerTwo, playerOne)
     if playerTwo.health <= 0:
         print(Fore.BLUE + Style.BRIGHT + playerOne.name + " wins")
+        Scores.addScore(playerOne.name)
         break
     if ai == 1:
-        Game.gameAi(playerTwo, playerOne, playerTwo)
+        Game.ai(playerTwo, playerOne, playerTwo)
     else:
-        Game.game(playerTwo, playerOne, playerTwo)
+        Game.multiplayer(playerTwo, playerOne, playerTwo)
     if playerOne.health <= 0:
         print(Fore.BLUE + Style.BRIGHT + playerTwo.name + " wins ")
+        Scores.addScore(playerTwo.name)
         break
-print("GAME OVER")  
+print("GAME OVER")
+json.dump(score.scoresList, scoreFile)  
